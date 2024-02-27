@@ -10,17 +10,21 @@ public class EmailService
         string toEmail,
         string subject,
         string body,
-        string fromName = "Equipe rafael.io",
-        string fromEmail = "rafaarantes@live.com")
+        string fromName = "Teste",
+        string fromEmail = "test@test.com")
     {
-        var smtpClient = new SmtpClient(Configuration.Smtp.Host, Configuration.Smtp.Port);
-        smtpClient.Credentials = new NetworkCredential(Configuration.Smtp.UserName, Configuration.Smtp.Password);
-        smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-        smtpClient.EnableSsl = true;
+        var smtpClient = new SmtpClient(Configuration.Smtp.Host, Configuration.Smtp.Port)
+        {
+            Credentials = new NetworkCredential(Configuration.Smtp.UserName, Configuration.Smtp.Password),
+            DeliveryMethod = SmtpDeliveryMethod.Network,
+            EnableSsl = true
+        };
 
-        var mail = new MailMessage();
+        var mail = new MailMessage
+        {
+            From = new MailAddress(fromEmail, fromName),
+        };
 
-        mail.From = new MailAddress(fromEmail, fromName);
         mail.To.Add(new MailAddress(toEmail, toName));
         mail.Subject = subject;
         mail.Body = body;
