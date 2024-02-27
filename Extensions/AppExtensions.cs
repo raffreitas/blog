@@ -74,5 +74,6 @@ public static class AppExtensions
         );
         builder.Services.AddTransient<TokenService>();
         builder.Services.AddTransient<EmailService>();
+        builder.Services.AddTransient<StorageService>();
     }
 }

@@ -98,17 +98,17 @@ public class AccountController : ControllerBase
     [HttpPost("v1/accounts/upload-image")]
     public async Task<IActionResult> UploadImage(
         [FromBody] UploadImageViewModel model,
+        [FromServices] StorageService storage,
         [FromServices] BlogDataContext context
     )
     {
-        var fileName = $"{Guid.NewGuid().ToString()}.jpg";
-        var data = new Regex(@"^data:image\/[a-z]+;base64")
-            .Replace(model.Base64Image, "");
-        var bytes = Convert.FromBase64String(data);
 
+        const string storageContainer = "user-images";
+
+        var imageUrl = string.Empty;
         try
         {
-            await System.IO.File.WriteAllBytesAsync($"wwwroot/images/{fileName}", bytes);
+            imageUrl = storage.Upload(model.Base64Image, storageContainer);
         }
         catch (Exception)
         {
@@ -122,7 +122,7 @@ public class AccountController : ControllerBase
         if (user == null)
             return NotFound(new ResultViewModel<User>("Usuario nao encontrado"));
 
-        user.Image = $"https://localhost:0000/images/{fileName}";
+        user.Image = imageUrl;
         try
         {
             context.Users.Update(user);
